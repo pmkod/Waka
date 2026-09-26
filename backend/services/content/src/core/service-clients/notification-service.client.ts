@@ -25,46 +25,18 @@ const notificationServiceHttpClient = internalHttpClient.extend({
 });
 
 const notificationServiceClient = {
-	async createNotification(data: CreateNotificationInput): Promise<void> {
-		try {
-			await notificationServiceHttpClient.post(
-				"internal/notification/create-notification",
-				{ json: data },
-			);
-		} catch (error) {
-			console.error(
-				"[NotificationServiceClient] Failed to create notification:",
-				error,
-			);
-		}
+	async createNotification(data: CreateNotificationInput) {
+		await notificationServiceHttpClient.post(
+			"internal/notification/create-notification",
+			{ json: data },
+		);
 	},
 
-	async removeNotification(data: RemoveNotificationInput): Promise<void> {
-		try {
-			await notificationServiceHttpClient.post(
-				"internal/notification/remove-notification",
-				{ json: data },
-			);
-		} catch (error) {
-			console.error(
-				"[NotificationServiceClient] Failed to remove notification:",
-				error,
-			);
-		}
-	},
-
-	async removeNotificationForComment(commentId: string): Promise<void> {
-		try {
-			await notificationServiceHttpClient.post(
-				"internal/notification/remove-comment-notifications",
-				{ json: { commentId } },
-			);
-		} catch (error) {
-			console.error(
-				"[NotificationServiceClient] Failed to remove comment notification:",
-				error,
-			);
-		}
+	async removeNotification(data: RemoveNotificationInput) {
+		await notificationServiceHttpClient.post(
+			"internal/notification/remove-notification",
+			{ json: data },
+		);
 	},
 };
 

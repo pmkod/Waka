@@ -1,7 +1,11 @@
 import { createRoute, defineOpenAPIRoute, z } from "@hono/zod-openapi";
 import { HttpStatus } from "@/core/constants/http-status";
 import { prisma } from "@/core/databases";
-import { notificationServiceClient } from "@/core/service-clients/notification-service.client";
+import {
+	NotificationEventTypes,
+	NotificationGroupKeyBuilder,
+	notificationServiceClient,
+} from "@/core/service-clients/notification-service.client";
 import type { HonoAuthenticatedEnv } from "@/core/types/hono-authenticated-env";
 import { requireUserAuthentication } from "@/features/authentication/middlewares/require-user-authentication.middleware";
 import { CommentsRoutesTag } from "../comments.constants";
@@ -37,6 +41,14 @@ const deleteCommentRoute = defineOpenAPIRoute<
 		const comment = await prisma.comment.update({
 			where: { id, authorId: authenticatedUserId, exists: true },
 			data: { exists: false },
+			select: {
+				id: true,
+				authorId: true,
+				postId: true,
+				parentId: true,
+				post: { select: { authorId: true } },
+				parent: { select: { authorId: true } },
+			},
 		});
 
 		await prisma.post.update({
@@ -44,7 +56,28 @@ const deleteCommentRoute = defineOpenAPIRoute<
 			data: { commentsCount: { decrement: 1 } },
 		});
 
-		await notificationServiceClient.removeNotificationForComment(comment.id);
+		const eventType = comment.parentId
+			? NotificationEventTypes.COMMENT_REPLY
+			: NotificationEventTypes.POST_COMMENT;
+		const groupKey = comment.parentId
+			? NotificationGroupKeyBuilder.buildCommentReply(
+					comment.parentId,
+					comment.postId,
+				)
+			: NotificationGroupKeyBuilder.buildPostComment(comment.postId);
+		const recipientId = comment.parentId
+			? comment.parent?.authorId
+			: comment.post.authorId;
+
+		if (recipientId) {
+			await notificationServiceClient.removeNotification({
+				recipientId,
+				initiatorId: comment.authorId,
+				eventType,
+				targetId: comment.id,
+				groupKey,
+			});
+		}
 
 		return c.json({ message: "Comment deleted successfully" });
 	},

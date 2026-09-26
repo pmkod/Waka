@@ -103,7 +103,7 @@ Ces appels sont actuellement attendus avec `await`, mais leurs erreurs sont abso
 | `POST /internal/notification/create-notification` | Création d'un commentaire ou d'une réponse | `content.comment-created.v1` |
 | `POST /internal/notification/remove-notification` | Unlike d'un post | `content.post-unliked.v1` |
 | `POST /internal/notification/remove-notification` | Unlike d'un commentaire | `content.comment-unliked.v1` |
-| `POST /internal/notification/remove-comment-notifications` | Suppression d'un commentaire | `content.comment-deleted.v1` |
+| `POST /internal/notification/remove-notification` | Suppression d'un commentaire | `content.comment-deleted.v1` |
 
 Types de notification actuellement produits : `POST_LIKE`, `COMMENT_LIKE`, `POST_COMMENT`, `COMMENT_REPLY`.
 

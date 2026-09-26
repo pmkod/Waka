@@ -60,14 +60,6 @@ Suppression ciblée :
 - Supprime la notification correspondante si elle existe.
 - Décrémente le compteur non vu uniquement si la notification supprimée n’était pas déjà vue.
 
-Suppression par commentaire :
-
-- `POST /internal/notification/remove-comment-notifications`
-- Reçoit `commentId`.
-- Supprime uniquement la notification `POST_COMMENT` ou `COMMENT_REPLY` dont le `targetId` correspond au commentaire.
-- Conserve les notifications de likes du commentaire et les notifications de ses réponses.
-- Décrémente le compteur non vu du destinataire uniquement si la notification supprimée n’était pas vue.
-
 ## Fichiers appelants
 
 ### Service utilisateur
