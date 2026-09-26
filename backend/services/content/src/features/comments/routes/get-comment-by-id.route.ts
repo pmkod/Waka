@@ -62,18 +62,21 @@ const getCommentByIdRoute = defineOpenAPIRoute<typeof routeDef, HonoEnv>({
 		}
 
 		const authenticatedUserId = c.get("authenticatedUser")?.id;
-		if (
-			authenticatedUserId &&
-			(await userServiceClient.hasBlockRelationship(
+		if (authenticatedUserId && authenticatedUserId !== post.authorId) {
+			const relationships = await userServiceClient.checkBlockRelationships(
 				authenticatedUserId,
-				post.authorId,
-			))
-		) {
-			throw new Exception({
-				code: ExceptionCodes.comment_not_found,
-				message: "Comment not found",
-				status: HttpStatus.NOT_FOUND.code,
-			});
+				[post.authorId],
+			);
+			if (
+				relationships.blockedUserIds.includes(post.authorId) ||
+				relationships.blockedByUserIds.includes(post.authorId)
+			) {
+				throw new Exception({
+					code: ExceptionCodes.comment_not_found,
+					message: "Comment not found",
+					status: HttpStatus.NOT_FOUND.code,
+				});
+			}
 		}
 
 		const parentComments: Array<typeof comment> = [];

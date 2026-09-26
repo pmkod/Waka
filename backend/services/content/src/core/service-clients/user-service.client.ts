@@ -51,32 +51,12 @@ const userServiceClient = {
 			.json<FetchActiveUsersBatchResponse>();
 	},
 
-	async checkBlockRelationships(
-		userId: string,
-		otherUserIds: string[],
-	): Promise<BlockRelationshipIdsDto> {
-		try {
-			return await userServiceHttpClient
-				.post("internal/user/check-block-relationships", {
-					json: { userId, otherUserIds },
-				})
-				.json<BlockRelationshipIdsDto>();
-		} catch (error) {
-			console.error(
-				"[UserServiceClient] Failed to check block relationships:",
-				error,
-			);
-			return { blockedUserIds: [], blockedByUserIds: [] };
-		}
-	},
-
-	async hasBlockRelationship(userId: string, otherUserId: string) {
-		if (userId === otherUserId) return false;
-		const relationships = await this.checkBlockRelationships(userId, [otherUserId]);
-		return (
-			relationships.blockedUserIds.includes(otherUserId) ||
-			relationships.blockedByUserIds.includes(otherUserId)
-		);
+	async checkBlockRelationships(userId: string, otherUserIds: string[]) {
+		return await userServiceHttpClient
+			.post("internal/user/check-block-relationships", {
+				json: { userId, otherUserIds },
+			})
+			.json<BlockRelationshipIdsDto>();
 	},
 
 	async fetchFollowingIds(userId: string) {

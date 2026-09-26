@@ -35,15 +35,20 @@ const getPostLikesRoute = defineOpenAPIRoute<
 			where: { id: postId, exists: true },
 			select: { authorId: true },
 		});
-		if (
-			!post ||
-			(authenticatedUserId &&
-				(await userServiceClient.hasBlockRelationship(
-					authenticatedUserId,
-					post.authorId,
-				)))
-		) {
+		if (!post) {
 			return c.json({ count: 0, likes: [] });
+		}
+		if (authenticatedUserId && authenticatedUserId !== post.authorId) {
+			const relationships = await userServiceClient.checkBlockRelationships(
+				authenticatedUserId,
+				[post.authorId],
+			);
+			if (
+				relationships.blockedUserIds.includes(post.authorId) ||
+				relationships.blockedByUserIds.includes(post.authorId)
+			) {
+				return c.json({ count: 0, likes: [] });
+			}
 		}
 
 		const likes = await prisma.postLike.findMany({

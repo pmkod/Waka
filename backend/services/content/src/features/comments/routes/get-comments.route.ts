@@ -56,18 +56,26 @@ const getCommentsRoute = defineOpenAPIRoute<
 			where: { id: postId, exists: true },
 			select: { authorId: true },
 		});
-		if (
-			!post ||
-			(authenticatedUserId &&
-				(await userServiceClient.hasBlockRelationship(
-					authenticatedUserId,
-					post.authorId,
-				)))
-		) {
+		if (!post) {
 			return c.json({
 				data: [],
 				pagination: { total: 0, page, limit, totalPages: 0 },
 			});
+		}
+		if (authenticatedUserId && authenticatedUserId !== post.authorId) {
+			const relationships = await userServiceClient.checkBlockRelationships(
+				authenticatedUserId,
+				[post.authorId],
+			);
+			if (
+				relationships.blockedUserIds.includes(post.authorId) ||
+				relationships.blockedByUserIds.includes(post.authorId)
+			) {
+				return c.json({
+					data: [],
+					pagination: { total: 0, page, limit, totalPages: 0 },
+				});
+			}
 		}
 
 		const commentsWhere = {

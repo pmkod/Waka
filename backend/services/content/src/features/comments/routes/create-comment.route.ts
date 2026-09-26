@@ -63,17 +63,21 @@ const createCommentRoute = defineOpenAPIRoute<
 				status: HttpStatus.NOT_FOUND.code,
 			});
 		}
-		if (
-			await userServiceClient.hasBlockRelationship(
+		if (authenticatedUserId !== post.authorId) {
+			const relationships = await userServiceClient.checkBlockRelationships(
 				authenticatedUserId,
-				post.authorId,
-			)
-		) {
-			throw new Exception({
-				code: ExceptionCodes.post_not_found,
-				message: "Post not found",
-				status: HttpStatus.NOT_FOUND.code,
-			});
+				[post.authorId],
+			);
+			if (
+				relationships.blockedUserIds.includes(post.authorId) ||
+				relationships.blockedByUserIds.includes(post.authorId)
+			) {
+				throw new Exception({
+					code: ExceptionCodes.post_not_found,
+					message: "Post not found",
+					status: HttpStatus.NOT_FOUND.code,
+				});
+			}
 		}
 
 		let parentComment: {
