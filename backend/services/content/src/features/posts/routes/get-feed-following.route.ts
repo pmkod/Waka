@@ -50,28 +50,40 @@ const getFeedFollowingRoute = defineOpenAPIRoute<
 		const authenticatedUser = c.get("authenticatedUser");
 		const authenticatedUserId = authenticatedUser?.id;
 
-		const blockRelationships = authenticatedUserId
-			? await userServiceClient.fetchBlockRelationshipIds(authenticatedUserId)
-			: { blockedUserIds: [], blockedByUserIds: [] };
-		const hiddenUserIds = uniqueValues([
-			...blockRelationships.blockedUserIds,
-			...blockRelationships.blockedByUserIds,
-		]);
-
 		let targetAuthorIds: string[] | undefined;
 		if (query.authorId) {
-			if (hiddenUserIds.includes(query.authorId)) {
-				return c.json({
-					posts: [],
-					pagination: { nextCursor: null, hasNextPage: false, limit },
-				});
+			if (authenticatedUserId) {
+				const relationships = await userServiceClient.checkBlockRelationships(
+					authenticatedUserId,
+					[query.authorId],
+				);
+				if (
+					relationships.blockedUserIds.includes(query.authorId) ||
+					relationships.blockedByUserIds.includes(query.authorId)
+				) {
+					return c.json({
+						posts: [],
+						pagination: { nextCursor: null, hasNextPage: false, limit },
+					});
+				}
 			}
 			targetAuthorIds = [query.authorId];
 		} else if (authenticatedUserId) {
 			const { userIds: followingIds } =
 				await userServiceClient.fetchFollowingIds(authenticatedUserId);
+			let hiddenUserIds = new Set<string>();
+			if (followingIds.length > 0) {
+				const relationships = await userServiceClient.checkBlockRelationships(
+					authenticatedUserId,
+					followingIds,
+				);
+				hiddenUserIds = new Set([
+					...relationships.blockedUserIds,
+					...relationships.blockedByUserIds,
+				]);
+			}
 			const allowedFollowingIds = followingIds.filter(
-				(id) => !hiddenUserIds.includes(id),
+				(id) => !hiddenUserIds.has(id),
 			);
 			targetAuthorIds = [authenticatedUserId, ...allowedFollowingIds];
 		} else {

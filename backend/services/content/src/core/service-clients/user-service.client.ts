@@ -51,22 +51,19 @@ const userServiceClient = {
 			.json<FetchActiveUsersBatchResponse>();
 	},
 
-	async fetchBlockRelationshipIds(
+	async checkBlockRelationships(
 		userId: string,
+		otherUserIds: string[],
 	): Promise<BlockRelationshipIdsDto> {
 		try {
-			const relationships = await userServiceHttpClient
-				.get(
-					`internal/user/get-block-relationship-ids/${encodeURIComponent(userId)}`,
-				)
+			return await userServiceHttpClient
+				.post("internal/user/check-block-relationships", {
+					json: { userId, otherUserIds },
+				})
 				.json<BlockRelationshipIdsDto>();
-			return {
-				blockedUserIds: relationships.blockedUserIds ?? [],
-				blockedByUserIds: relationships.blockedByUserIds ?? [],
-			};
 		} catch (error) {
 			console.error(
-				"[UserServiceClient] Failed to fetch block relationship IDs:",
+				"[UserServiceClient] Failed to check block relationships:",
 				error,
 			);
 			return { blockedUserIds: [], blockedByUserIds: [] };
@@ -75,7 +72,7 @@ const userServiceClient = {
 
 	async hasBlockRelationship(userId: string, otherUserId: string) {
 		if (userId === otherUserId) return false;
-		const relationships = await this.fetchBlockRelationshipIds(userId);
+		const relationships = await this.checkBlockRelationships(userId, [otherUserId]);
 		return (
 			relationships.blockedUserIds.includes(otherUserId) ||
 			relationships.blockedByUserIds.includes(otherUserId)

@@ -73,7 +73,7 @@ Sources : `backend/services/user/src/core/service-clients/session-service.client
 |---|---|---|---|
 | `GET /internal/user/get-active-user/{userId}` | Hydratation de l’auteur dans `POST /content/create-post`, `POST /content/create-comment`, `GET /content/get-post-by-id/{id}` et `GET /content/get-user-posts/{userId}` | Le profil est inclus dans la réponse HTTP en cours | `UserService.GetActiveUser` |
 | `POST /internal/user/get-active-users-batch` | Hydratation des auteurs actifs dans les réponses de lecture des posts, commentaires et bookmarks | Les profils font partie de la réponse HTTP en cours | `UserService.GetActiveUsersBatch` |
-| `GET /internal/user/get-block-relationship-ids/{userId}` | Filtrage des contenus et contrôle avant commentaire | La visibilité/autorisation dépend immédiatement du résultat | `UserService.GetBlockRelationshipIds` ou `UserService.HasBlockRelationship` |
+| `POST /internal/user/check-block-relationships` | Vérification ciblée des auteurs concernés par le filtrage de contenu et les contrôles avant commentaire | La visibilité/autorisation dépend immédiatement du résultat | `UserService.CheckBlockRelationships` |
 | `GET /internal/user/get-following-ids/{userId}` | Construction du feed « following » | La liste est nécessaire pour exécuter la requête de feed | `UserService.GetFollowingIds` |
 
 Sources : `backend/services/content/src/core/service-clients/user-service.client.ts` et ses usages sous `backend/services/content/src/features/`.

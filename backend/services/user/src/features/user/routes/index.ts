@@ -3,7 +3,6 @@ import { changeEmailRoute } from "./change-email.route";
 import { changePasswordRoute } from "./change-password.route";
 import { checkBlockRelationshipsRoute } from "./check-block-relationships.route";
 import { followUserRoute } from "./follow-user.route";
-import { getBlockRelationshipIdsRoute } from "./get-block-relationship-ids.route";
 import { getBlockedUsersRoute } from "./get-blocked-users.route";
 import { getFollowSuggestionsRoute } from "./get-follow-suggestions.route";
 import { getFollowingIdsRoute } from "./get-following-ids.route";
@@ -46,7 +45,6 @@ const userRoutes = [
 	updateUnseenNotificationsCountRoute,
 	resetUnseenNotificationCountRoute,
 	getFollowingIdsRoute,
-	getBlockRelationshipIdsRoute,
 	checkBlockRelationshipsRoute,
 ];
 

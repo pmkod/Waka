@@ -1,7 +1,6 @@
 import { createRoute, defineOpenAPIRoute, z } from "@hono/zod-openapi";
 import { HttpStatus } from "@/core/constants/http-status";
 import { prisma } from "@/core/databases";
-import { uniqueValues } from "@/core/functions/collection.functions";
 import { userServiceClient } from "@/core/service-clients/user-service.client";
 import type { HonoEnv } from "@/core/types/hono-env";
 import { PostsRoutesTag } from "../posts.constants";
@@ -48,19 +47,20 @@ const getUserPostsRoute = defineOpenAPIRoute<
 		const authenticatedUser = c.get("authenticatedUser");
 		const authenticatedUserId = authenticatedUser?.id;
 
-		const blockRelationships = authenticatedUserId
-			? await userServiceClient.fetchBlockRelationshipIds(authenticatedUserId)
-			: { blockedUserIds: [], blockedByUserIds: [] };
-		const hiddenUserIds = uniqueValues([
-			...blockRelationships.blockedUserIds,
-			...blockRelationships.blockedByUserIds,
-		]);
-
-		if (hiddenUserIds.includes(userId)) {
-			return c.json({
-				posts: [],
-				pagination: { nextCursor: null, hasNextPage: false, limit },
-			});
+		if (authenticatedUserId) {
+			const relationships = await userServiceClient.checkBlockRelationships(
+				authenticatedUserId,
+				[userId],
+			);
+			if (
+				relationships.blockedUserIds.includes(userId) ||
+				relationships.blockedByUserIds.includes(userId)
+			) {
+				return c.json({
+					posts: [],
+					pagination: { nextCursor: null, hasNextPage: false, limit },
+				});
+			}
 		}
 
 		const cursorDate = query.cursorCreatedAt

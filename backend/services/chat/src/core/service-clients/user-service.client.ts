@@ -49,16 +49,6 @@ const userServiceClient = {
 			.json<FetchActiveUsersBatchResponse>();
 	},
 
-	async fetchBlockRelationshipIds(
-		userId: string,
-	): Promise<BlockRelationshipIdsDto> {
-		return await userServiceHttpClient
-			.get(
-				`internal/user/get-block-relationship-ids/${encodeURIComponent(userId)}`,
-			)
-			.json<BlockRelationshipIdsDto>();
-	},
-
 	async checkBlockRelationships(
 		userId: string,
 		otherUserIds: string[],

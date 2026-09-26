@@ -4,6 +4,7 @@ import { prisma } from "@/core/databases";
 import { uniqueValues } from "@/core/functions/collection.functions";
 import { userServiceClient } from "@/core/service-clients/user-service.client";
 import type { HonoEnv } from "@/core/types/hono-env";
+import type { Prisma } from "@/generated/prisma/client";
 import { PostsRoutesTag } from "../posts.constants";
 import {
 	hydratePostMediaFiles,
@@ -33,6 +34,21 @@ const routeDef = createRoute({
 	},
 });
 
+const likedPostSelect = {
+	id: true,
+	authorId: true,
+	text: true,
+	exists: true,
+	likesCount: true,
+	commentsCount: true,
+	createdAt: true,
+	updatedAt: true,
+	medias: {
+		select: postMediaWithFileIdsSelect,
+		orderBy: { position: "asc" },
+	},
+} satisfies Prisma.PostSelect;
+
 const getUserLikedPostsRoute = defineOpenAPIRoute<
 	typeof routeDef,
 	HonoEnv
@@ -48,19 +64,20 @@ const getUserLikedPostsRoute = defineOpenAPIRoute<
 		const authenticatedUser = c.get("authenticatedUser");
 		const authenticatedUserId = authenticatedUser?.id;
 
-		const blockRelationships = authenticatedUserId
-			? await userServiceClient.fetchBlockRelationshipIds(authenticatedUserId)
-			: { blockedUserIds: [], blockedByUserIds: [] };
-		const hiddenUserIds = uniqueValues([
-			...blockRelationships.blockedUserIds,
-			...blockRelationships.blockedByUserIds,
-		]);
-
-		if (hiddenUserIds.includes(userId)) {
-			return c.json({
-				posts: [],
-				pagination: { nextCursor: null, hasNextPage: false, limit },
-			});
+		if (authenticatedUserId) {
+			const relationships = await userServiceClient.checkBlockRelationships(
+				authenticatedUserId,
+				[userId],
+			);
+			if (
+				relationships.blockedUserIds.includes(userId) ||
+				relationships.blockedByUserIds.includes(userId)
+			) {
+				return c.json({
+					posts: [],
+					pagination: { nextCursor: null, hasNextPage: false, limit },
+				});
+			}
 		}
 
 		const cursorDate = query.cursorCreatedAt
@@ -70,44 +87,69 @@ const getUserLikedPostsRoute = defineOpenAPIRoute<
 			cursorDate !== null &&
 			!Number.isNaN(cursorDate.getTime()) &&
 			query.cursorId;
-		const cursorCondition = hasValidCursor
-			? {
-					OR: [
-						{ createdAt: { lt: cursorDate } },
-						{ createdAt: cursorDate, id: { lt: query.cursorId } },
-					],
-				}
-			: undefined;
+		const pageSize = limit + 1;
+		const posts: Prisma.PostGetPayload<{
+			select: typeof likedPostSelect;
+		}>[] = [];
+		let candidateCursorDate = hasValidCursor ? cursorDate : null;
+		let candidateCursorId = hasValidCursor ? query.cursorId : undefined;
+		let reachedEnd = false;
 
-		const posts = await prisma.post.findMany({
-			where: {
-				exists: true,
-				postLikes: { some: { authorId: userId } },
-				...(hiddenUserIds.length > 0
-					? { authorId: { notIn: hiddenUserIds } }
-					: {}),
-				...(cursorCondition ? cursorCondition : {}),
-			},
-			orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-			take: limit + 1,
-			select: {
-				id: true,
-				authorId: true,
-				text: true,
-				exists: true,
-				likesCount: true,
-				commentsCount: true,
-				createdAt: true,
-				updatedAt: true,
-				medias: {
-					select: postMediaWithFileIdsSelect,
-					orderBy: { position: "asc" },
+		while (posts.length < pageSize && !reachedEnd) {
+			const candidateCursorCondition =
+				candidateCursorDate && candidateCursorId
+					? {
+							OR: [
+								{ createdAt: { lt: candidateCursorDate } },
+								{
+									createdAt: candidateCursorDate,
+									id: { lt: candidateCursorId },
+								},
+							],
+						}
+					: undefined;
+			const candidates = await prisma.post.findMany({
+				where: {
+					exists: true,
+					postLikes: { some: { authorId: userId } },
+					...(candidateCursorCondition ? candidateCursorCondition : {}),
 				},
-			},
-		});
+				orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+				take: pageSize,
+				select: likedPostSelect,
+			});
 
-		const hasNextPage = posts.length > limit;
-		const items = hasNextPage ? posts.slice(0, limit) : posts;
+			if (candidates.length === 0) {
+				reachedEnd = true;
+				continue;
+			}
+
+			let hiddenUserIds = new Set<string>();
+			if (authenticatedUserId) {
+				const relationships = await userServiceClient.checkBlockRelationships(
+					authenticatedUserId,
+					uniqueValues(candidates.map((post) => post.authorId)),
+				);
+				hiddenUserIds = new Set([
+					...relationships.blockedUserIds,
+					...relationships.blockedByUserIds,
+				]);
+			}
+
+			posts.push(
+				...candidates.filter((post) => !hiddenUserIds.has(post.authorId)),
+			);
+			const lastCandidate = candidates.at(-1);
+			if (lastCandidate) {
+				candidateCursorDate = lastCandidate.createdAt;
+				candidateCursorId = lastCandidate.id;
+			}
+			reachedEnd = candidates.length < pageSize;
+		}
+
+		const pagePosts = posts.slice(0, pageSize);
+		const hasNextPage = pagePosts.length > limit;
+		const items = hasNextPage ? pagePosts.slice(0, limit) : pagePosts;
 		const lastItem = items.at(-1);
 		const hydratedItems = await hydratePostMediaFiles(items);
 		const nextCursor =

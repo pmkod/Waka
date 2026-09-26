@@ -83,13 +83,6 @@ const getBookmarksRoute = defineOpenAPIRoute<
 			50,
 		);
 
-		const blockRelationships =
-			await userServiceClient.fetchBlockRelationshipIds(ownerId);
-		const hiddenUserIds = uniqueValues([
-			...blockRelationships.blockedUserIds,
-			...blockRelationships.blockedByUserIds,
-		]);
-
 		const cursorDate = query.cursorCreatedAt
 			? new Date(query.cursorCreatedAt)
 			: null;
@@ -126,9 +119,6 @@ const getBookmarksRoute = defineOpenAPIRoute<
 								ownerId,
 								post: {
 									exists: true,
-									...(hiddenUserIds.length > 0
-										? { authorId: { notIn: hiddenUserIds } }
-										: {}),
 								},
 							},
 							...(collectionItemCursorCondition
@@ -157,9 +147,6 @@ const getBookmarksRoute = defineOpenAPIRoute<
 							collectionItems: { some: {} },
 							post: {
 								exists: true,
-								...(hiddenUserIds.length > 0
-									? { authorId: { notIn: hiddenUserIds } }
-									: {}),
 							},
 							...(bookmarkCursorCondition ? bookmarkCursorCondition : {}),
 						},
