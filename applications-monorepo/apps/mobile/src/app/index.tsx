@@ -51,23 +51,17 @@ export default function Index() {
 					<Button
 						variant="default"
 						size="lg"
-						className="w-full bg-primary h-12 rounded-xl flex-row items-center justify-center shadow-md shadow-primary/20"
 						onPress={() => router.push("/login")}
 					>
-						<Text className="font-semibold text-base text-primary-foreground">
-							Log in
-						</Text>
+						<Text>Log in</Text>
 					</Button>
 
 					<Button
 						variant="outline"
 						size="lg"
-						className="w-full border-border bg-card h-12 rounded-xl flex-row items-center justify-center"
 						onPress={() => router.push("/signup")}
 					>
-						<Text className="font-semibold text-base text-foreground">
-							Sign up
-						</Text>
+						<Text>Sign up</Text>
 					</Button>
 				</View>
 			</ScrollView>
