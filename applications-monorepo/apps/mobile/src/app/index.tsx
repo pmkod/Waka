@@ -3,7 +3,7 @@ import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { Logo } from "@/core/components/partials/logo";
-import { Button } from "@/core/components/ui/button";
+import { Button, ButtonText } from "@/core/components/ui/button";
 import { FullPageLoader } from "@/core/components/ui/full-page-loader";
 import { AuthShowcaseCards } from "@/features/authentication/showcase/auth-showcase-cards";
 import { useAuthenticatedUser } from "@/features/user/authenticated-user/use-authenticated-user";
@@ -53,7 +53,7 @@ export default function Index() {
 						size="lg"
 						onPress={() => router.push("/login")}
 					>
-						<Text>Log in</Text>
+						<ButtonText>Log in</ButtonText>
 					</Button>
 
 					<Button
@@ -61,7 +61,7 @@ export default function Index() {
 						size="lg"
 						onPress={() => router.push("/signup")}
 					>
-						<Text>Sign up</Text>
+						<ButtonText>Sign up</ButtonText>
 					</Button>
 				</View>
 			</ScrollView>

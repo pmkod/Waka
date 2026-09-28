@@ -3,18 +3,19 @@ import { Tabs, useRouter } from "expo-router";
 import {
 	Home,
 	Search,
-	PlusSquare,
 	Bell,
 	User as UserIcon,
 	// MessageCircle, // Module de discussion temporairement désactivé.
 	Bookmark,
 } from "lucide-react-native";
 import { Pressable, View, Text } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Logo } from "@/core/components/partials/logo";
 import { useAuthenticatedUser } from "@/features/user/authenticated-user/use-authenticated-user";
 
 export default function AppLayout() {
 	const router = useRouter();
+	const insets = useSafeAreaInsets();
 	const { data: authData } = useAuthenticatedUser();
 	const unseenCount = authData?.user?.unseenNotificationsCount ?? 0;
 
@@ -29,8 +30,8 @@ export default function AppLayout() {
 				tabBarStyle: {
 					backgroundColor: "#09090b",
 					borderTopColor: "#27272a",
-					height: 62,
-					paddingBottom: 8,
+					height: 62 + insets.bottom,
+					paddingBottom: 8 + insets.bottom,
 					paddingTop: 8,
 				},
 				tabBarActiveTintColor: "#bc243c",
@@ -88,20 +89,7 @@ export default function AppLayout() {
 				}}
 			/>
 
-			{/* 3. Create Post Tab */}
-			<Tabs.Screen
-				name="create-post"
-				options={{
-					title: "Post",
-					headerShown: false,
-					tabBarStyle: { display: "none" },
-					tabBarIcon: ({ color, size }) => (
-						<PlusSquare size={size ?? 22} color={color} />
-					),
-				}}
-			/>
-
-			{/* 4. Notifications Tab */}
+			{/* 3. Notifications Tab */}
 			<Tabs.Screen
 				name="notifications"
 				options={{
@@ -122,7 +110,7 @@ export default function AppLayout() {
 				}}
 			/>
 
-			{/* 5. Profile Tab */}
+			{/* 4. Profile Tab */}
 			<Tabs.Screen
 				name="profile/index"
 				options={{
@@ -135,6 +123,14 @@ export default function AppLayout() {
 			/>
 
 			{/* Hidden Inner Screens */}
+			<Tabs.Screen
+				name="create-post"
+				options={{
+					href: null,
+					headerShown: false,
+					tabBarStyle: { display: "none" },
+				}}
+			/>
 			<Tabs.Screen
 				name="posts/[postId]"
 				options={{
