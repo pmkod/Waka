@@ -49,7 +49,9 @@ export function CompleteSignupForm({ onSuccess }: CompleteSignupFormProps) {
 			});
 			onSuccess();
 		} catch (err: any) {
-			setErrorMessage(err.message || "Failed to complete sign-up. Please try again.");
+			setErrorMessage(
+				err.message || "Failed to complete sign-up. Please try again.",
+			);
 		}
 	};
 
@@ -91,9 +93,6 @@ export function CompleteSignupForm({ onSuccess }: CompleteSignupFormProps) {
 								autoCapitalize="none"
 								autoCorrect={false}
 							/>
-							<FieldDescription>
-								This name will be visible to other users.
-							</FieldDescription>
 							<FieldError error={errors.username?.message} />
 						</Field>
 					)}
@@ -104,7 +103,6 @@ export function CompleteSignupForm({ onSuccess }: CompleteSignupFormProps) {
 			<Button
 				variant="default"
 				size="lg"
-				className="w-full bg-primary h-12 rounded-xl mt-2 flex-row items-center justify-center"
 				onPress={handleSubmit(onSubmit)}
 				disabled={isSubmitting || completeSignup.isPending}
 			>

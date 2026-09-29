@@ -54,7 +54,9 @@ export function NewPasswordForm({ onSuccess }: NewPasswordFormProps) {
 			await newPassword.mutateAsync({ newPassword: values.password });
 			onSuccess();
 		} catch (err: any) {
-			setErrorMessage(err.message || "Failed to save password. Please try again.");
+			setErrorMessage(
+				err.message || "Failed to save password. Please try again.",
+			);
 		}
 	};
 
@@ -127,7 +129,6 @@ export function NewPasswordForm({ onSuccess }: NewPasswordFormProps) {
 			<Button
 				variant="default"
 				size="lg"
-				className="w-full bg-primary h-12 rounded-xl mt-2 flex-row items-center justify-center"
 				onPress={handleSubmit(onSubmit)}
 				disabled={isSubmitting || newPassword.isPending}
 			>

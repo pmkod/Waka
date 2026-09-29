@@ -1,9 +1,5 @@
 import * as React from "react";
-import {
-	KeyboardAvoidingView,
-	Platform,
-	ScrollView,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { CompleteSignupForm } from "@/features/authentication/complete-signup/complete-signup.form";
@@ -18,9 +14,7 @@ export default function CompleteSignupScreen() {
 				<ScrollView
 					contentContainerStyle={{
 						flexGrow: 1,
-						justifyContent: "center",
 						paddingHorizontal: 24,
-						paddingVertical: 20,
 					}}
 					keyboardShouldPersistTaps="handled"
 					showsVerticalScrollIndicator={false}

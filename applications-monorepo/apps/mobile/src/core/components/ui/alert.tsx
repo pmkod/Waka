@@ -18,17 +18,14 @@ export function Alert({
 		<View
 			role="alert"
 			className={cn(
-				"flex-row items-start gap-2.5 rounded-lg border p-3.5",
+				"flex-row items-start gap-2.5 rounded border p-3.5",
 				colorScheme === "destructive"
-					? "border-destructive/40 bg-destructive/10"
+					? "border-destructive"
 					: "border-border bg-card",
 				className,
 			)}
 			{...props}
 		>
-			{colorScheme === "destructive" && (
-				<AlertCircle size={18} color="#ef4444" className="mt-0.5 shrink-0" />
-			)}
 			<View className="flex-1">{children}</View>
 		</View>
 	);
@@ -41,7 +38,10 @@ export function AlertDescription({
 }: React.ComponentProps<typeof Text>) {
 	return (
 		<Text
-			className={cn("text-sm text-destructive font-normal leading-5", className)}
+			className={cn(
+				"text-sm text-destructive font-normal leading-5",
+				className,
+			)}
 			{...props}
 		>
 			{children}

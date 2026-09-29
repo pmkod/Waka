@@ -56,7 +56,9 @@ export function SignupForm({ onSuccess, onNavigateLogin }: SignupFormProps) {
 			});
 			onSuccess();
 		} catch (err: any) {
-			setErrorMessage(err.message || "Failed to create account. Please try again.");
+			setErrorMessage(
+				err.message || "Failed to create account. Please try again.",
+			);
 		}
 	};
 
@@ -152,7 +154,6 @@ export function SignupForm({ onSuccess, onNavigateLogin }: SignupFormProps) {
 			<Button
 				variant="default"
 				size="lg"
-				className="w-full bg-primary h-12 rounded-xl mt-2 flex-row items-center justify-center"
 				onPress={handleSubmit(onSubmit)}
 				disabled={isSubmitting || signup.isPending}
 			>

@@ -134,7 +134,6 @@ export function UserVerificationForm({
 								}}
 								keyboardType="number-pad"
 								maxLength={6}
-								className="tracking-widest text-lg font-mono font-semibold"
 							/>
 							<FieldError error={errors.code?.message} />
 						</Field>
