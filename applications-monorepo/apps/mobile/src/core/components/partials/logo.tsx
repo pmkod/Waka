@@ -1,31 +1,29 @@
-import * as React from "react";
-import { Text, View } from "react-native";
+import { View, Image } from "react-native";
 import { cn } from "@/core/lib/utils";
 
 type LogoProps = {
-	className?: string;
-	size?: "sm" | "md" | "lg" | "xl";
+	size?: "md" | "lg";
 };
 
-export function Logo({ className, size = "md" }: LogoProps) {
+const image = require("../../../../assets/images/waka-white-logo.png");
+const { width, height } = Image.resolveAssetSource(image);
+
+export function Logo({ size = "md" }: LogoProps) {
 	const sizeClasses = {
-		sm: "text-xl",
-		md: "text-2xl",
-		lg: "text-3xl",
-		xl: "text-4xl",
+		md: "w-24",
+		lg: "w-32",
 	}[size];
 
 	return (
-		<View className="flex-row items-center">
-			<Text
-				className={cn(
-					"font-bold text-foreground tracking-tight",
-					sizeClasses,
-					className,
-				)}
-			>
-				Waka
-			</Text>
+		<View className={cn("flex-row items-center", sizeClasses)}>
+			<Image
+				source={image}
+				style={{
+					width: "100%",
+					aspectRatio: width / height,
+					resizeMode: "contain",
+				}}
+			/>
 		</View>
 	);
 }
