@@ -1,9 +1,5 @@
 import * as React from "react";
-import {
-	KeyboardAvoidingView,
-	Platform,
-	ScrollView,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { PasswordResetForm } from "@/features/authentication/password-reset/password-reset.form";
@@ -19,9 +15,7 @@ export default function PasswordResetScreen() {
 				<ScrollView
 					contentContainerStyle={{
 						flexGrow: 1,
-						justifyContent: "center",
 						paddingHorizontal: 24,
-						paddingVertical: 20,
 					}}
 					keyboardShouldPersistTaps="handled"
 					showsVerticalScrollIndicator={false}

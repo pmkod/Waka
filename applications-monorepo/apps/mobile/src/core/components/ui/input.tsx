@@ -10,7 +10,7 @@ function Input({
 		<TextInput
 			placeholderTextColor={placeholderTextColor}
 			className={cn(
-				"border-input bg-card text-foreground flex h-11 w-full min-w-0 flex-row items-center rounded-lg border px-3.5 py-2 text-base shadow-sm shadow-black/5",
+				"border-input bg-card text-foreground flex h-11 w-full min-w-0 flex-row items-center rounded border px-3.5 py-2 text-base shadow-sm shadow-black/5",
 				props.editable === false &&
 					cn(
 						"opacity-50",

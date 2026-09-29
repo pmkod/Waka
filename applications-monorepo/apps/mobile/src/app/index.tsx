@@ -51,9 +51,9 @@ export default function Index() {
 				</View>
 
 				{/* Bottom Section: Action Buttons */}
-				<View className="flex-col gap-3 pt-4">
+				<View className="flex flex-col gap-3 pt-4">
 					<Button
-						variant="default"
+						variant="outline"
 						size="lg"
 						onPress={() => router.push("/login")}
 					>
@@ -61,8 +61,8 @@ export default function Index() {
 					</Button>
 
 					<Button
-						variant="outline"
 						size="lg"
+						variant="default"
 						onPress={() => router.push("/signup")}
 					>
 						<ButtonText>Sign up</ButtonText>

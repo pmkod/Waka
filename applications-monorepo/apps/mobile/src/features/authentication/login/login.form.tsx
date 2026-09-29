@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Alert, AlertDescription } from "@/core/components/ui/alert";
-import { Button } from "@/core/components/ui/button";
+import { Button, ButtonText } from "@/core/components/ui/button";
 import {
 	Field,
 	FieldError,
@@ -139,7 +139,6 @@ export function LoginForm({
 			<Button
 				variant="default"
 				size="lg"
-				className="w-full bg-primary h-12 rounded-xl mt-2 flex-row items-center justify-center"
 				onPress={handleSubmit(onSubmit)}
 				disabled={isSubmitting || login.isPending}
 			>
@@ -151,9 +150,7 @@ export function LoginForm({
 						</Text>
 					</View>
 				) : (
-					<Text className="text-primary-foreground font-semibold text-base">
-						Log in
-					</Text>
+					<ButtonText>Log in</ButtonText>
 				)}
 			</Button>
 

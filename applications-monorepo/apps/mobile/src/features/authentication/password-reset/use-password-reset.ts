@@ -18,5 +18,10 @@ export const usePasswordReset = () => {
 			await saveUserVerificationData(userVerification);
 			return userVerification;
 		},
+		onError: async (eror, variables, context) => {
+			console.log(eror);
+			console.log(variables);
+			console.log(context);
+		},
 	});
 };

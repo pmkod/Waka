@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Alert, AlertDescription } from "@/core/components/ui/alert";
-import { Button } from "@/core/components/ui/button";
+import { Button, ButtonText } from "@/core/components/ui/button";
 import {
 	Field,
 	FieldDescription,
@@ -51,7 +51,9 @@ export function PasswordResetForm({
 			await passwordReset.mutateAsync({ email: values.email.trim() });
 			onSuccess();
 		} catch (err: any) {
-			setErrorMessage(err.message || "Failed to send reset code. Please try again.");
+			setErrorMessage(
+				err.message || "Failed to send reset code. Please try again.",
+			);
 		}
 	};
 
@@ -94,9 +96,6 @@ export function PasswordResetForm({
 								autoCapitalize="none"
 								autoCorrect={false}
 							/>
-							<FieldDescription>
-								We will send you a verification code.
-							</FieldDescription>
 							<FieldError error={errors.email?.message} />
 						</Field>
 					)}
@@ -107,21 +106,18 @@ export function PasswordResetForm({
 			<Button
 				variant="default"
 				size="lg"
-				className="w-full bg-primary h-12 rounded-xl mt-2 flex-row items-center justify-center"
 				onPress={handleSubmit(onSubmit)}
 				disabled={isSubmitting || passwordReset.isPending}
 			>
 				{isSubmitting || passwordReset.isPending ? (
-					<View className="flex-row items-center gap-2">
+					<ButtonText className="flex-row items-center gap-2">
 						<ActivityIndicator size="small" color="#ffffff" />
 						<Text className="text-primary-foreground font-semibold text-base">
 							Sending…
 						</Text>
-					</View>
+					</ButtonText>
 				) : (
-					<Text className="text-primary-foreground font-semibold text-base">
-						Send code
-					</Text>
+					<ButtonText>Send code</ButtonText>
 				)}
 			</Button>
 

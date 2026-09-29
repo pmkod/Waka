@@ -1,9 +1,5 @@
 import * as React from "react";
-import {
-	KeyboardAvoidingView,
-	Platform,
-	ScrollView,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { UserVerificationForm } from "@/features/authentication/user-verification/user-verification.form";
@@ -40,9 +36,7 @@ export default function UserVerificationScreen() {
 				<ScrollView
 					contentContainerStyle={{
 						flexGrow: 1,
-						justifyContent: "center",
 						paddingHorizontal: 24,
-						paddingVertical: 20,
 					}}
 					keyboardShouldPersistTaps="handled"
 					showsVerticalScrollIndicator={false}

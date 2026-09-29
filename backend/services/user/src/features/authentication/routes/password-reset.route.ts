@@ -42,7 +42,12 @@ const passwordResetRoute = defineOpenAPIRoute({
 		});
 
 		if (!user) {
-			return c.json({ message: "Ok" });
+			return c.json({
+				userVerification: {
+					id: crypto.randomUUID(),
+					token: generateUserVerificationToken(),
+				},
+			});
 		}
 
 		const code = generateUserVerificationCode();

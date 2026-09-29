@@ -15,7 +15,7 @@ export function PasswordInput({ className, ...props }: PasswordInputProps) {
 			<TextInput
 				secureTextEntry={!showPassword}
 				className={cn(
-					"border-input bg-card text-foreground flex h-11 w-full flex-row items-center rounded-lg border px-3.5 pr-11 text-base shadow-sm shadow-black/5",
+					"border-input bg-card text-foreground flex h-11 w-full flex-row items-center rounded border px-3.5 pr-11 text-base shadow-sm shadow-black/5",
 					Platform.select({
 						native: "placeholder:text-muted-foreground/60",
 						web: "placeholder:text-muted-foreground outline-none focus-visible:border-ring focus-visible:ring-[2px]",

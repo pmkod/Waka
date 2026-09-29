@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Alert, AlertDescription } from "@/core/components/ui/alert";
-import { Button } from "@/core/components/ui/button";
+import { Button, ButtonText } from "@/core/components/ui/button";
 import {
 	Field,
 	FieldError,
@@ -15,7 +15,10 @@ import { Input } from "@/core/components/ui/input";
 import { useCompleteLogin } from "../complete-login/use-complete-login";
 import { useResendUserVerificationCode } from "../resend-user-verification-code/use-resend-user-verification-code";
 import { useUserVerification } from "./use-user-verification";
-import { UserVerificationGoals, type UserVerificationGoalType } from "./user-verification-goal";
+import {
+	UserVerificationGoals,
+	type UserVerificationGoalType,
+} from "./user-verification-goal";
 
 const verificationSchema = z.object({
 	code: z
@@ -83,7 +86,8 @@ export function UserVerificationForm({
 		}
 	};
 
-	const isPending = userVerification.isPending || completeLogin.isPending || isSubmitting;
+	const isPending =
+		userVerification.isPending || completeLogin.isPending || isSubmitting;
 
 	return (
 		<View className="w-full flex-col gap-6">
@@ -121,7 +125,7 @@ export function UserVerificationForm({
 						<Field>
 							<FieldLabel>Verification code</FieldLabel>
 							<Input
-								placeholder="123456"
+								placeholder="Votre code ici"
 								value={value}
 								onBlur={onBlur}
 								onChangeText={(val) => {
@@ -130,7 +134,7 @@ export function UserVerificationForm({
 								}}
 								keyboardType="number-pad"
 								maxLength={6}
-								className="text-center tracking-widest text-lg font-mono font-semibold"
+								className="tracking-widest text-lg font-mono font-semibold"
 							/>
 							<FieldError error={errors.code?.message} />
 						</Field>
@@ -142,7 +146,6 @@ export function UserVerificationForm({
 			<Button
 				variant="default"
 				size="lg"
-				className="w-full bg-primary h-12 rounded-xl mt-2 flex-row items-center justify-center"
 				onPress={handleSubmit(onSubmit)}
 				disabled={isPending}
 			>
@@ -154,9 +157,7 @@ export function UserVerificationForm({
 						</Text>
 					</View>
 				) : (
-					<Text className="text-primary-foreground font-semibold text-base">
-						Verify
-					</Text>
+					<ButtonText>Verify</ButtonText>
 				)}
 			</Button>
 
@@ -175,7 +176,11 @@ export function UserVerificationForm({
 						Resend
 					</Text>
 					{resend.isPending ? (
-						<ActivityIndicator size="small" color="#ffffff" className="scale-75" />
+						<ActivityIndicator
+							size="small"
+							color="#ffffff"
+							className="scale-75"
+						/>
 					) : null}
 				</Pressable>
 			</View>

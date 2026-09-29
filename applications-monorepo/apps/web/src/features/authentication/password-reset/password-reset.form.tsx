@@ -44,6 +44,8 @@ function PasswordResetForm({ onSuccess }: PasswordResetFormProps) {
 				await passwordReset.mutateAsync({ email: value.email });
 				onSuccess();
 			} catch (error) {
+				console.log(error);
+
 				setErrorMessage((error as Error).message);
 			}
 		},
