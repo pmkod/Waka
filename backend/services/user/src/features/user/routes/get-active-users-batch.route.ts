@@ -6,13 +6,10 @@ import { removeDuplicateStrings } from "@/core/utils/array.utils";
 import { UserRoutesTag } from "../user.constants";
 
 const GetActiveUsersBatchRequestBody = z.object({
-	userIds: z
-		.array(z.string().nonempty())
-		.min(1, "At least one user ID is required")
-		.openapi({
-			example: ["user-123", "user-456"],
-			description: "List of active user IDs to retrieve",
-		}),
+	userIds: z.array(z.string().nonempty()).openapi({
+		example: ["user-123", "user-456"],
+		description: "List of active user IDs to retrieve",
+	}),
 });
 
 const routeDef = createRoute({

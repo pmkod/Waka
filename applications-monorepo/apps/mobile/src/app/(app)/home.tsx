@@ -35,21 +35,6 @@ export default function HomeScreen() {
 
 	const posts = data?.pages.flatMap((page) => page.posts) ?? [];
 
-	const renderHeader = () => (
-		<View className="border-b border-[#27272a] bg-[#09090b] px-4 py-3">
-			<Pressable
-				onPress={() => router.push("/(app)/create-post" as any)}
-				className="flex-row items-center gap-3 rounded-full border border-[#27272a] bg-[#18181b] px-4 py-2.5 active:bg-[#27272a]/70"
-			>
-				<UserAvatar user={user} size="sm" />
-				<Text className="flex-1 text-sm text-muted-foreground">
-					What's on your mind?
-				</Text>
-				<Feather size={16} color="#bc243c" />
-			</Pressable>
-		</View>
-	);
-
 	if (isLoading && !data) {
 		return (
 			<View className="flex-1 items-center justify-center bg-[#09090b]">
@@ -79,7 +64,6 @@ export default function HomeScreen() {
 				renderItem={({ item }) => (
 					<PostItem post={item} onDeleted={() => refetch()} />
 				)}
-				ListHeaderComponent={renderHeader}
 				ListEmptyComponent={
 					<View className="py-16 px-6 items-center">
 						<EmptyBlock
